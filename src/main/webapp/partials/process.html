@@ -1,0 +1,401 @@
+<div id="status" style="display:none">${status}</div>
+<div class="muti-search">
+    <h3 ng-bind="processName"></h3>
+    <div class="search-condition">
+        <h5>Please select the conditions</h5>
+        <ul ng-show="condition.showinfo" ng-repeat="condition in condition.selections">
+            <li class="title" ng-bind="condition.title"></li>
+            <li ng-repeat="selection in condition.selections" ng-class="{'selected' : selection.check}" ng-click="updateSelection(selection)" ng-bind="selection.title"></li>
+        </ul>
+        <div class="university" ng-show="showSelection">
+            <span class="title">University:</span>
+            <select class="first-select" ng-model="university_pro.cities" ng-options="u.cities for u in university_pro" ng-change="changeCity()">
+                <option value="">-- City --</option>
+            </select>
+            <select class="second-select" ng-model="condition.otherCondition.universitytmp" ng-options="u for u in university_pro.cities.universities" ng-show="selectUniversity" ng-change="changeUniversity()">
+                <option value="">-- University --</option>
+            </select>
+            <input type="text" ng-model="condition.otherCondition.universitytmp" ng-hide="selectUniversity" class="searchbox" ng-change="searchUniversity()">
+        </div>
+        <div class="major">
+            <span class="title">Major:</span>
+            <select class="first-select" ng-model="major.division" ng-options="u.division for u in major" ng-change="changeClass()">
+                <option value="">-- Class --</option>
+            </select>
+            <select class="second-select" ng-model="condition.otherCondition.majortmp" ng-options="u for u in major.division.sections" ng-change="changeSection()">
+                <option value="">-- Section --</option>
+            </select>
+        </div>
+        <div class="search">
+            <span class="title">Search Name:</span>
+            <input type="text" class="searchbox" ng-model="candidateName" ng-change="changeCandidateName(candidateName)">
+        </div>
+        <div class="search" ng-show="showSelection">
+            <span class="title">Search Graduation Time:</span>
+            <!-- <input type="date" class="calendar form_datetime" ng-model="graduateDate.start" ng-change="changeGraduateDate(graduateDate.start,graduateDate.end)"> - <input type="date" class="calendar form_datetime" ng-model="graduateDate.end" ng-change="changeGraduateDate(graduateDate.start,graduateDate.end)"> -->
+            <input type="text" class="calendar form_datetime searchbox" ng-model="graduateDate.start" ng-change="changeGraduateDate(graduateDate.start,graduateDate.end)" placeholder="yyyy/mm/dd"> -
+            <input type="text" class="calendar searchbox form_datetime" ng-model="graduateDate.end" ng-change="changeGraduateDate(graduateDate.start,graduateDate.end)" placeholder="yyyy/mm/dd">
+        </div>
+        <div class="round-score" ng-show="condition.title != 'STATUS_NEW'">
+            <div class="round">
+                <span class="title">Round 1 score:</span>
+                <input type="text" ng-model="round1.start" autocomplete="false" ng-change="changeScore1(round1.start,round1.end)"> -
+                <input type="text" ng-model="round1.end" autocomplete="false" ng-change="changeScore1(round1.start,round1.end)">
+            </div>
+            <div class="round">
+                <span class="title">Round 2 score:</span>
+                <input type="text" ng-model="round2.start" autocomplete="false" ng-change="changeScore2(round2.start,round2.end)"> -
+                <input type="text" ng-model="round2.end" autocomplete="false" ng-change="changeScore2(round2.start,round2.end)">
+            </div>
+            <div class="round">
+                <span class="title">Round 3 score:</span>
+                <input type="text" ng-model="round3.start" autocomplete="false" ng-change="changeScore3(round3.start,round3.end)"> -
+                <input type="text" ng-model="round3.end" autocomplete="false" ng-change="changeScore3(round3.start,round3.end)">
+            </div>
+        </div>
+    </div>
+    <div class="showbutton">
+        <a class="toggle-btn show-btn" ng-click="ToggleSelection()" ng-hide="showSelection">More Options  &or;</a>
+        <a class="toggle-btn hide-btn" ng-click="ToggleSelection()" ng-show="showSelection">Collapse  &and;</a>
+    </div>
+</div>
+<div class="search-result" context-menu="menuOptions">
+    <div class="form-button">
+        <button type="button" class="btn " ng-click="editAll()">All Edit</button>
+        <button type="button" class="btn " ng-click="deleteSelected()">Delete</button>
+        <button type="button" class="btn " ng-click="saveData()">Save</button>
+        <button type="button" class="btn " ng-click="roundMove()" ng-hide="condition.title == 'STATUS_Q5'">Round Move</button>
+        <button type="button" class="btn " ng-click="moveBack()" ng-hide="condition.title == 'STATUS_NEW'">Move Back</button>
+        <!-- 	<button type="button" class="btn " ng-click="exportCandidateZip()">Export Resume</button> -->
+        <button type="button" class="btn " ng-click="exportPrettyCandidateZip()">Export Formal Resume</button>
+        <button type="button" class="btn " ng-click="exportQuestionnaireZip()">Export Survey</button>
+        <button type="button" class="btn " ng-click="exportExcel()">Export Excel</button>
+        <!-- 		<button type="button" class="btn " data-toggle="modal" data-whatever="@mdo" ng-click="InitEmail()">Send Email</button> -->
+        <button type="button" class="btn " data-toggle="modal" data-target="#importModal" data-whatever="@mdo" ng-show="condition.title == 'STATUS_NEW'||condition.title == 'STATUS_ALL'">Import Excel</button>
+        <!-- 		<button type="button" class="btn " ng-click="shuffleData()">Shuffle</button> -->
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="check-box">
+                    <input type="checkbox" class="checkbox" id="checkbox" ng-model="page.allcheck" ng-click="selectAll()">
+                    <label for="checkbox"></label>
+                </th>
+                <th></th>
+                <th>No</th>
+                <th>Name</th>
+                <th>Phone number</th>
+                <th>Degree</th>
+                <th>Status</th>
+                <th ng-show="condition.title != 'STATUS_NEW'">Q1</th>
+                <th ng-show="condition.title != 'STATUS_NEW'">Q2</th>
+                <th ng-show="condition.title != 'STATUS_NEW'">Q3</th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="talent in talentDataSet.talentDatas" ng-class="{'new_move':talent.roundmoveflag=='true'||talent.movebackflag=='true'}">
+                <!-- 		    <div ng-bind="selected"></div> -->
+                <td class="check-box">
+                    <input type="checkbox" class="checkbox" id="checkbox-{{talent.nationalId}}" ng-click="isCheck(talent)" ng-model="talent.check" ng-checked="talent.check">
+                    <label for="checkbox-{{talent.nationalId}}"></label>
+                </td>
+                <td><span ng-show="talent.sendemailflag=='true'" class="label label-success">Sent</span></td>
+                <td>{{talent.date.substring(0,4)+talent.date.substring(5,7)+talent.date.substring(8,10)}}-{{talent.appId}}</td>
+                <td ng-bind="talent.name" style="cursor:pointer;" ng-click="showcandidateInfo(talent)" data-toggle="modal" data-target="#candidateinfo" data-backdrop="static"></td>
+                <td ng-bind="talent.phone"></td>
+                <td ng-bind="talent.degree"></td>
+                <td ng-bind="talent.status.substring(7)"></td>
+                <td ng-show="condition.title != 'STATUS_NEW'">
+                    <p ng-show="!talent.isEdit" ng-bind="talent.q1"></p>
+                    <input type="text" ng-model="talent.oldQ1" value="" ng-show="talent.isEdit">
+                </td>
+                <td ng-show="condition.title != 'STATUS_NEW'">
+                    <p ng-show="!talent.isEdit" ng-bind="talent.q2"></p>
+                    <input type="text" ng-model="talent.oldQ2" value="" ng-show="talent.isEdit">
+                </td>
+                <td ng-show="condition.title != 'STATUS_NEW'">
+                    <p ng-show="!talent.isEdit" ng-bind="talent.q3"></p>
+                    <input type="text" ng-model="talent.oldQ3" value="" ng-show="talent.isEdit">
+                </td>
+                <td ng-show="condition.title == 'STATUS_Q1' || condition.title == 'STATUS_Q2' || condition.title == 'STATUS_Q3'">
+                    <a href="javascript:;" title="comment" class="fa fa-search fa-lg" data-toggle="modal" data-target="#myModal" ng-click="commentData(talent)"></a>
+                </td>
+                <td ng-show="condition.title != 'STATUS_NEW'">
+                    <a href="javascript:;" title="edit" class="fa fa-pencil-square-o fa-lg" ng-click="edit(talent)"></a>
+                </td>
+                <td>
+                    <a ng-hide="condition.title == 'STATUS_TRASH'" title="trash" href="javascript:;" class="fa fa-trash fa-lg" ng-click="deleteData(talent)"></a>
+                    <a ng-show="condition.title == 'STATUS_TRASH'" href="javascript:;" class="fa fa-mail-reply fa-lg" ng-click="recoverData(talent)"></a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="pagination-content">
+        <uib-pagination total-items="bigTotalItems" ng-model="page.bigCurrentPage" max-size="page.maxSize" class="pagination-sm" boundary-link-numbers="true" previous-text="&lsaquo;" next-text="&rsaquo;" ng-change="pageChanged()" items-per-page="20"></uib-pagination>
+    </div>
+</div>
+<!-- HR Comment by Jasper -->
+<div class="hr-comment-modal">
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-main">
+                <div class="modal-header">
+                    <button class="modal_close_button" type="button" data-dismiss="modal" aria-hidden="true" ng-click="cancelComment()"></button>
+                    <h4 class="modal_title" id="myModalLabel">
+						Evaluation
+					</h4>
+                </div>
+                <div class="modal_body">
+                    <table>
+                        <tr>
+                            <td class="td_title">
+                                <div>Appearance:</div>
+                            </td>
+                            <td class="td_input">
+                                <div class="odlist" name="Appearance" id="Appearance">
+                                    <div class="oddetail">
+                                        <ul class="stars">
+                                            <li> <a class="fiv">5</a> </li>
+                                            <li> <a class="fou">4</a> </li>
+                                            <li> <a class="thr">3</a> </li>
+                                            <li> <a class="two">2</a> </li>
+                                            <li> <a class="one">1</a> </li>
+                                        </ul>
+                                    </div>
+                            </td>
+                            <td class="td_title">
+                                <div>Offer Status:</div>
+                            </td>
+                            <td class="td_input">
+                                <div class="modal_radio">
+                                    <label>
+                                        <input ng-model="historyHrComment.offer" type="radio" value="true"> <span>Yes</span> </label>
+                                    <label>
+                                        <input ng-model="historyHrComment.offer" type="radio" value="false"> <span>No</span> </label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td_title">
+                                <div>Demeanour:</div>
+                            </td>
+                            <td class="td_input">
+                                <div class="odlist" name="Demeanour" id="Demeanour">
+                                    <div class="oddetail">
+                                        <ul class="stars">
+                                            <li> <a class="fiv">5</a> </li>
+                                            <li> <a class="fou">4</a> </li>
+                                            <li> <a class="thr">3</a> </li>
+                                            <li> <a class="two">2</a> </li>
+                                            <li> <a class="one">1</a> </li>
+                                        </ul>
+                                    </div>
+                            </td>
+                            <td class="td_title">
+                                <div>Postgraduate Recommendation:</div>
+                            </td>
+                            <td class="td_input">
+                                <div class="modal_radio">
+                                    <label>
+                                        <input ng-model="historyHrComment.postgraduate" type="radio" value="true"> <span>Yes</span> </label>
+                                    <label>
+                                        <input ng-model="historyHrComment.postgraduate" type="radio" value="false"> <span>No</span> </label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td_title">
+                                <div>English:</div>
+                            </td>
+                            <td class="td_input">
+                                <div class="odlist" name="English" id="English">
+                                    <div class="oddetail">
+                                        <ul class="stars">
+                                            <li> <a class="fiv">5</a> </li>
+                                            <li> <a class="fou">4</a> </li>
+                                            <li> <a class="thr">3</a> </li>
+                                            <li> <a class="two">2</a> </li>
+                                            <li> <a class="one">1</a> </li>
+                                        </ul>
+                                    </div>
+                            </td>
+                        </tr>
+                        <tr class="detail-title">
+                            <td>More Details: </td>
+                        </tr>
+                        <tr>
+                            <td class="td_title">
+                                <div>Interests:</div>
+                            </td>
+                            <td class="td_input">
+                                <div>
+                                    <input class="form-control" type="text" ng-model="historyHrComment.interests" />
+                                </div>
+                            </td>
+                            <td class="td_title">
+                                <div>Technical Skills:</div>
+                            </td>
+                            <td class="td_input">
+                                <div>
+                                    <input class="form-control" type="text" ng-model="historyHrComment.technicalSkill" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td_title">
+                                <div>Senior courses:</div>
+                            </td>
+                            <td class="td_input">
+                                <div>
+                                    <input class="form-control" type="text" ng-model="historyHrComment.seniorCourses" />
+                                </div>
+                            </td>
+                            <td class="td_title">
+                                <div>Hometown:</div>
+                            </td>
+                            <td class="td_input">
+                                <div>
+                                    <input class="form-control" type="text" ng-model="historyHrComment.hometown" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="td_title">
+                                <div>The Earliest Availability:</div>
+                            </td>
+                            <td class="td_input">
+                                <div>
+                                    <input class="form-control form_datetime" type="text" ng-model="historyHrComment.earliestEntry" placeholder="yyyy/mm/dd">
+                                </div>
+                            </td>
+                            <td class="td_title">
+                                <div>Parents' Attitude:</div>
+                            </td>
+                            <td class="td_input">
+                                <div>
+                                    <input class="form-control" type="text" ng-model="historyHrComment.parentAttitude" />
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <textarea class="modal_textarea form-control" placeholder="Your comment or question..." ng-model="historyHrComment.commentQuestion"></textarea>
+                    <div class="modal_submit" ng-click="submitHrComment()">Submit</div>
+                    </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- modal email by dww -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">New message</h4>
+            </div>
+            <input id="emailsubject" style=" margin-left: 15px;margin-top: 25px;width:600px; height:30px" class="" placeholder="Subject:" ng-model="talentEmail.subject" />
+            <!--     by dww{ -->
+            <div class="editor-wrap" style="padding:15px;">
+                <textarea ui-tinymce="tinymceOptions" ng-model="talentEmail.context"></textarea>
+            </div>
+            <!-- ========== -->
+            <!--     by dww} -->
+            <div class="modal-footer">
+                <form id="uploadattachment" class="email-upload" enctype="multipart/form-data">
+                    <input type="file" name="file" multiple="multiple" class="dropify col-md-6" data-default-file="" />
+                    <input type="file" name="file1" multiple="multiple" class="dropify col-md-6" data-default-file="" />
+                    <input type="file" name="file2" multiple="multiple" class="dropify col-md-6" data-default-file="" />
+                    <input type="file" name="file3" multiple="multiple" class="dropify col-md-6" data-default-file="" />
+                </form>
+                <!-- 			<form id="uploadForm" enctype="multipart/form-data"> -->
+                <!-- 					<input type="file" name="file" class="dropify" data-default-file="" />  -->
+                <!-- 			</form> -->
+                <button type="button" style="margin-top:12px" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" style="margin-top:12px" class="btn btn-warning" ng-click="saveemail(talentEmail)">Save Email Template</button>
+                <button type="button" style="margin-top:12px ; background-color:#ff8c03" class="btn btn-warning" ng-click="sendmodelemail(talentEmail.subject)">Send Email</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- modal by dww -->
+<!-- modal ImportExcel by west -->
+<div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="exampleModalLabel">Import Excel</h4>
+            </div>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="file" name="file" class="dropify" id="importExcel" data-default-file="" data-max-file-size="3M" />
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-warning" ng-click="importExcel()">Import</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- modal by west -->
+<script type="text/javascript" src="resources/js/bootstrap-datetimepicker.min.js"></script>
+<script>
+// hr comment star animate
+$(document).ready(function(e) {
+    $(".form_datetime").datetimepicker({
+        format: 'yyyy-mm-dd',
+        minView: 'month',
+        autoclose: true
+    });
+    var stay_star, $stay_staro;
+    $(".stars li a").click(function(e) {
+        $(this).parents(".stars").find("a").removeClass("active");
+        $(this).addClass("active");
+        $stay_staro = $(this);
+    });
+    $(".stars li a").hover(function(e) {
+        $stay_staro = $(this).parents(".stars").find(".active");
+        stay_star = $(this).parents(".stars").siblings(".stars_span").html();
+        $(this).parents(".stars").siblings(".stars_span").html($(this).html());
+        $(this).parents(".stars").find(".active").toggleClass("toggle_active").toggleClass("active");
+    }, function(e) {
+        $(this).parents(".stars").find(".toggle_active").toggleClass("toggle_active").toggleClass("active");
+        $stay_staro.trigger("click");
+    })
+});
+</script>
+<script>
+$(document).ready(
+    function() {
+        // Basic
+        $('.dropify').dropify();
+
+        // Translated
+        $('.dropify-fr').dropify({
+            messages: {
+                'default': '点击或拖拽文件到这里',
+                'replace': '点击或拖拽文件到这里来替换文件',
+                'remove': '移除文件',
+                'error': '对不起，你上传的文件太大了'
+            }
+        });
+
+        // Used events
+        var drEvent = $('.dropify-event').dropify();
+
+        drEvent.on('dropify.beforeClear', function(event, element) {
+            return confirm("Do you really want to delete \"" + element.filename + "\" ?");
+        });
+
+        drEvent.on('dropify.afterClear', function(event, element) {
+            alert('File deleted');
+        });
+    });
+</script>

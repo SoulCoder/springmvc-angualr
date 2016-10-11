@@ -1,0 +1,28 @@
+<div ng-controller="employeeInfoController">
+	<div class="search-result" context-menu="menuOptions">
+	    <div class="form-button">
+			<button type="button" class="btn " data-toggle="modal" data-target="#importExcelModal" data-whatever="@mdo">Import Excel{{aaa}}</button>
+		</div>
+	</div>
+	
+	<!-- modal ImportExcel by west -->
+	<div class="modal fade" id="importExcelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+	    <div class="modal-dialog" role="document">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	                    <span aria-hidden="true">&times;</span>
+	                </button>
+	                <h4 class="modal-title" id="exampleModalLabel">Import Excel</h4>
+	            </div>
+	            <form id="uploadForm" enctype="multipart/form-data">
+	                <input type="file" name="file" class="dropify" id="importExcel" data-default-file="" data-max-file-size="3M" />
+	            </form>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	                <button type="button" class="btn btn-warning" ng-click="importExcel()">Import</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+</div>

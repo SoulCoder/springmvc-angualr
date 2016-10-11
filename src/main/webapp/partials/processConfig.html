@@ -1,0 +1,74 @@
+<div ng-controller="processConfigController">
+	<div class="section position-information">
+            <p class="title">
+                <span>Process Configuration</span>
+            </p>
+            <div class="position-content">
+                <div class="row">
+                    <div class="form-group col-sm-6">
+                        <label class="col-sm-4 col-xs-6 control-label">Module:</label>
+                        <div class="col-sm-5 col-xs-6">
+                        	<input ng-model="process.module" type="text" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-sm-6">
+                        <label class="col-sm-4 col-xs-6 control-label">Table:</label>
+                        <div class="col-sm-5 col-xs-6">
+                        	<input ng-model="process.table" type="text" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" ng-repeat="step in process.stepList">
+                    <div class="form-group col-sm-6">
+                        <label class="col-sm-4 col-xs-6 control-label">Step:</label>
+                        <div class="col-sm-5 col-xs-6">
+                         <label>{{step.stepNo}}</label>
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <label class="col-sm-4 col-xs-6 control-label">processor:</label>
+                        <div class="col-sm-5 col-xs-6">
+                        	<select ng-model="step.processor" class="form-control">
+                        		<option value="">---Please Select---</option>
+                        		<option ng-repeat="processor in processors" value="{{processor.value}}">{{processor.label}}</option>
+                        	</select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group add-education">
+                	<img src="/newoa/resources/images/icon/add.png" ng-click="addStep()" class="left add-icon">
+                	<div class="left explanation">Add Step</div>
+                	<img src="/newoa/resources/images/icon/close.png"  ng-click="dropStep()" class="left">
+            	</div>
+            </div>
+        </div>
+	<div>
+        <button type="button" class='btn btn-warning' ng-click="submit()" ng-disabled="formCheck()">submit</button>
+        <button type="button" class='btn btn-warning' ng-click="cancel()">cancel</button>
+    </div>
+    
+    <div class="section personal-information">
+        <p class="title"><span>Process Configuration Record</span></p>
+     </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Module</th>
+                <th>Table</th>
+                <th>Step</th>
+                <th>Processor</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="process in processConfigList">
+                <td ng-bind="process.module"></td>
+                <td ng-bind="process.table"></td>
+                <td ng-bind="process.step"></td>
+                <td ng-bind="process.processor"></td>
+            </tr>
+        </tbody>
+    </table> 
+</div>

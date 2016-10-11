@@ -1,0 +1,374 @@
+<div class="bg-light lter b-b wrapper-md">
+    <h1 class="m-n font-thin h3"> Configuration </h1>
+</div>
+
+<div ng-init="init()" class="wrapper-md">
+    <div class="panel panel-default">
+        <div class="panel-body b-b b-light row">
+            <div class="col-md-4 paddingtop10">
+                <div class=" floatLeft" style="margin-right:10px;line-height: 24px;font-size:18px;"> Module</div>
+                <input class="form-control floatLeft" type="text"
+                       ng-model="statusFilter" style="width:250px ; margin-left: 20px;"
+                       placeholder=""/>
+            </div>
+            <div class="xf_ht_search_xl  col-md-3 paddingtop10" style="width: 80px;">
+
+                <button type="button" class="btn btn-info" ng-click="clear()">Reset</button>
+            </div>
+            <div class="xf_ht_search_xl  col-md-3 paddingtop10" style="width: 80px;">
+                <button type="button" class="btn btn-info" ng-click="showAddDialog()">Add</button>
+            </div>
+        </div>
+
+        <div ng-if="!errorMessage">
+            <table class="table m-b-none" ui-jq="footable" data-filter="#filter">
+                <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Module</th>
+                    <th>Table</th>
+                    <th>Role</th>
+                    <th>Opearation</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="configuration in configurationsList | filter: {module : statusFilter ,table: statusFilter} track by $index">
+                    <td>{{$index+1}}</td>
+                    <td title="{{configuration.module.label}}">{{configuration.module.label}}</td>
+                    <td title="{{configuration.table.label}}">{{configuration.table.label}}</td>
+                    <td title="">
+                        <span ng-repeat="selectedRole in configuration.roles">{{" "+selectedRole}}</span>
+                    </td>
+                    <td>
+                        <span><button type="button" class='btn btn-info'
+                                      ng-click="showViewDialog(configuration)">View</button></span>
+                        <span><button type="button" class='btn btn-info'
+                                      ng-click="showEditDialog(configuration)">Eidt</button></span>
+                        <span><button type="button" class='btn btn-info' ng-click="confirmDialog(configuration.id)">Delete</button></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div ng-if="errorMessage">
+            <span style="color: red">{{errorMessage}}</span>
+        </div>
+        <!-- pagination component -->
+        <!--<div>-->
+        <!--<tm-pagination conf="paginationConf"></tm-pagination>-->
+        <!--</div>-->
+    </div>
+
+<!--     <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" -->
+<!--          aria-labelledby="myModalLabel" aria-hidden="true"> -->
+<!--         <div class="modal-dialog" style="padding-top: 200px;width: 1100px;"> -->
+<!--             <div class="modal-content"> -->
+<!--                 <div class="modal-header"> -->
+<!--                     <button type="button" class="close" -->
+<!--                             data-dismiss="modal" aria-hidden="true"> -->
+<!--                         &times; -->
+<!--                     </button> -->
+<!--                     <h4 class="modal-title" id="viewLabel" ng-show="operation ==='view'"> -->
+<!--                         View -->
+<!--                     </h4> -->
+<!--                     <h4 class="modal-title" id="addLabel" ng-show="operation ==='save'"> -->
+<!--                         Add -->
+<!--                     </h4> -->
+<!--                     <h4 class="modal-title" id="editLabel" ng-show="operation ==='edit'"> -->
+<!--                         Edit -->
+<!--                     </h4> -->
+<!--                     <h4 class="modal-title" id="deleteLabel" ng-show="operation ==='delete'"> -->
+<!--                         Delete -->
+<!--                     </h4> -->
+<!--                 </div> -->
+<!--                 <div class="modal-body" style="min-height: 200px;"> -->
+<!--                     <form name="configurationForm"> -->
+<!--                         <div class="col-md-12" ng-show="!remindMessage"> -->
+<!--                              <span class="error" -->
+<!--                               		ng-show="check.moduleName && configurationForm.moduleName.$error.required"> -->
+<!-- 	     			        		Module Name Required !</span> -->
+<!--                             <div class="row marginTop"> -->
+<!--                                 <div class="col-md-2">Module Name:</div> -->
+<!--                                 <div class="col-md-2" ng-if="operation !=='view'"> -->
+<!--                                     <input class="form-control" type="text" required name="moduleName" -->
+<!--                                            ng-model="conf.module.name"/> -->
+<!--                                 </div> -->
+<!--                                 <div class="col-md-2" ng-if="operation =='view'">{{conf.module.name}}</div> -->
+
+<!--                                 <div class="col-md-2">Module Label:</div> -->
+<!--                                 <div class="col-md-2" ng-if="operation !=='view'"> -->
+<!--                                     <input class="form-control" type="text" required name="moduleLable" -->
+<!--                                            ng-model="conf.module.label"/> -->
+<!--                                 </div> -->
+<!--                                 <div class="col-md-2" ng-if="operation =='view'">{{conf.module.label}}</div> -->
+<!--                             </div> -->
+<!--                             <div class="row  marginTop"> -->
+<!--                                 <div class="col-md-2">Table Name:</div> -->
+<!--                                 <div class="col-md-2" ng-if="operation !=='view'"> -->
+<!--                                     <input class="form-control" type="text" required name="tableName" -->
+<!--                                            ng-model="conf.table.name"/> -->
+<!--                                 </div> -->
+<!--                                 <div class="col-md-2" ng-if="operation =='view'">{{conf.module.label}}</div> -->
+<!--                                 <div class="col-md-2">Table Label:</div> -->
+<!--                                 <div class="col-md-2" ng-if="operation !=='view'"> -->
+<!--                                     <input class="form-control" type="text" required name="tableLabel" -->
+<!--                                            ng-model="conf.table.label"/> -->
+<!--                                 </div> -->
+<!--                                 <div class="col-md-2" ng-if="operation =='view'">{{conf.module.label}}</div> -->
+<!--                             </div> -->
+<!--                             <div class="row marginTop" ng-repeat="item in conf.fields"> -->
+<!--                                 <div class="col-md-2">Filed Name:</div> -->
+<!--                                 <div class="col-md-2" ng-if="operation !=='view'"> -->
+<!--                                     <input class="form-control" type="text" required name="fieldName" -->
+<!--                                            ng-model="item.name"/></div> -->
+<!--                                 <div class="col-md-2" ng-if="operation =='view'">{{item.name}}</div> -->
+<!--                                 <div class="col-md-2">Filed Label:</div> -->
+<!--                                 <div class="col-md-2" ng-if="operation !=='view'"> -->
+<!--                                     <input class="form-control" type="text" required name="fieldLable" -->
+<!--                                            ng-model="item.label"/></div> -->
+<!--                                 <div class="col-md-2" ng-if="operation =='view'">{{item.label}}</div> -->
+<!--                                 <div class="col-md-2">Filed Type:</div> -->
+<!--                                 <div class="col-md-2"> -->
+<!--                                     <select ng-model="item.type" class="form-control w-md"> -->
+<!--                                         <option ng-repeat="data in typeList" ng-disabled="operation =='view'" -->
+<!--                                                 ng-selected="item.type == data.value" value="{{data.value}}"> -->
+<!--                                             {{data.label}} -->
+<!--                                         </option> -->
+<!--                                     </select> -->
+<!--                                 </div> -->
+<!--                             </div> -->
+<!--                             <div class="marginTop"> -->
+<!--                                 <button class='btn btn-info' ng-if="operation !='view'" ng-click="add()">Add Field -->
+<!--                                 </button> -->
+<!--                                 <button class='btn btn-info' ng-if="operation !='view' && conf.fields.length >1 " -->
+<!--                                         ng-click="remove()">Delete Field -->
+<!--                                 </button> -->
+<!--                             </div> -->
+<!--                             <div class="row marginTop"> -->
+<!--                                 <div class="col-md-2">Roles:</div> -->
+<!--                                 <div style="overflow: hidden;"> -->
+<!--                                     <div class="radioboxM" style="width:140px;" ng-repeat="role in roles"> -->
+<!--                                         <input ng-disabled="operation =='view'" id="{{role.name}}" name="proType1" -->
+<!--                                                type="checkbox" value="{{role.name}}" ng-checked="role.checked" -->
+<!--                                                ng-model="role.checked" ng-click="toggleSelection(role.name)"> -->
+<!--                                         <label for="{{role.name}}" title="{{role.name}}">{{role.name}}</label> -->
+<!--                                     </div> -->
+<!--                                 </div> -->
+
+<!--                             </div> -->
+<!--                             <div class="row marginTop" ng-repeat="item in conf.steps"> -->
+<!--                             	<div class="col-md-2">Step:</div> -->
+<!--                             	<div class="col-md-2">{{item.step+1}}</div> -->
+<!--                             	<div class="col-md-2">Processor:</div> -->
+<!--                             	<div class="col-md-2" ng-if="operation !=='view'"> -->
+<!--                                 	<select ng-model="item.processor" class="form-control w-md" required> -->
+<!--                                 		<option value="">-please select-</option> -->
+<!--                                         <option ng-repeat="data in processors" ng-disabled="operation =='view'" -->
+<!--                                                 value="{{data.value}}" ng-selected="item.processor==data.value">{{data.label}} -->
+<!--                                         </option> -->
+<!--                                     </select> -->
+<!--                                 </div> -->
+<!--                                 <div class="col-md-2" ng-if="operation =='view'">{{item.processor}}</div> -->
+<!--                             </div> -->
+<!--                             <div class="marginTop"> -->
+<!--                                 <button class='btn btn-info' ng-if="operation !='view'" ng-click="addStep()">Add Step -->
+<!--                                 </button> -->
+<!--                                 <button class='btn btn-info' ng-if="operation !='view' && conf.steps.length >1 " -->
+<!--                                         ng-click="removeStep()">Delete Step -->
+<!--                                 </button> -->
+<!--                             </div> -->
+<!--                         </div> -->
+
+<!--                         <div ng-show="remindMessage" class="col-md-12 errorMessage"> -->
+<!--                             {{remindMessage}} -->
+<!--                         </div> -->
+<!--                     </form> -->
+<!--                 </div> -->
+<!--                 <div class="modal-footer"> -->
+<!--                     <button type="button" class='btn btn-info' -->
+<!--                             data-dismiss="modal" ng-click="close()">Close -->
+<!--                     </button> -->
+<!--                     <button type="button" class='btn btn-info' ng-show="operation =='save'" -->
+<!--                             title="Fill in all the fields" -->
+<!--                             ng-disabled="!configurationForm.$valid || !containRole" ng-click="submit()"> -->
+<!--                         Save -->
+<!--                     </button> -->
+<!--                     <button type="button" class='btn btn-info' ng-show="operation ==='edit'" -->
+<!--                             ng-disabled="!configurationForm.$valid || !containRole" ng-click="edit()"> -->
+<!--                         Update -->
+<!--                     </button> -->
+<!--                     <button type="button" class='btn btn-info' ng-click="delete()" -->
+<!--                             ng-show="operation ==='delete'"> -->
+<!--                         Confirm -->
+<!--                     </button> -->
+<!--                 </div> -->
+<!--             </div> -->
+<!--         </div> -->
+<!--         </form> -->
+<!--     </div> -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="padding-top: 200px;width: 1100px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="viewLabel" ng-show="operation ==='view'">
+                        View
+                    </h4>
+                    <h4 class="modal-title" id="addLabel" ng-show="operation ==='save'">
+                        Add
+                    </h4>
+                    <h4 class="modal-title" id="editLabel" ng-show="operation ==='edit'">
+                        Edit
+                    </h4>
+                    <h4 class="modal-title" id="deleteLabel" ng-show="operation ==='delete'">
+                        Delete
+                    </h4>
+                </div>
+                <div class="modal-body" style="min-height: 200px;">
+                    <form name="configurationForm">
+                      <tabset class="tab-container" ng-init="steps={percent:20, step1:true, step2:false}" ng-show="!remindMessage">
+    						<tab heading="Form Configuration" active="steps.step1" select="steps.percent=10">
+      							<form name="step1" class="form-validation">
+      								 <div class="col-md-12">
+                             			<span class="error"
+                                  			ng-show="check.moduleName && configurationForm.moduleName.$error.required">
+	     			        				Module Name Required !</span>
+                            			<div class="row marginTop">
+                                			<div class="col-md-2">Module Name:</div>
+                                			<div class="col-md-2" ng-if="operation !=='view'">
+                                    			<input class="form-control" type="text" required name="moduleName"
+                                           			ng-model="conf.module.name"/>
+                                			</div>
+                                			<div class="col-md-2" ng-if="operation =='view'">{{conf.module.name}}</div>
+
+                                			<div class="col-md-2">Module Label:</div>
+                                			<div class="col-md-2" ng-if="operation !=='view'">
+                                    			<input class="form-control" type="text" required name="moduleLable"
+                                           			ng-model="conf.module.label"/>
+                                			</div>
+                                			<div class="col-md-2" ng-if="operation =='view'">{{conf.module.label}}</div>
+                            			</div>
+                            			<div class="row  marginTop">
+                                			<div class="col-md-2">Table Name:</div>
+                                			<div class="col-md-2" ng-if="operation !=='view'">
+                                    			<input class="form-control" type="text" required name="tableName"
+                                           			ng-model="conf.table.name"/>
+                                			</div>
+                                			<div class="col-md-2" ng-if="operation =='view'">{{conf.module.label}}</div>
+                                			<div class="col-md-2">Table Label:</div>
+                                			<div class="col-md-2" ng-if="operation !=='view'">
+                                    			<input class="form-control" type="text" required name="tableLabel"
+                                           			ng-model="conf.table.label"/>
+                                			</div>
+                                			<div class="col-md-2" ng-if="operation =='view'">{{conf.module.label}}</div>
+                            			</div>
+                            			<div class="row marginTop" ng-repeat="item in conf.fields">
+                                			<div class="col-md-2">Filed Name:</div>
+                                			<div class="col-md-2" ng-if="operation !=='view'">
+                                    			<input class="form-control" type="text" required name="fieldName"
+                                           			ng-model="item.name"/></div>
+                                			<div class="col-md-2" ng-if="operation =='view'">{{item.name}}</div>
+                                			<div class="col-md-2">Filed Label:</div>
+                                			<div class="col-md-2" ng-if="operation !=='view'">
+                                    			<input class="form-control" type="text" required name="fieldLable"
+                                           			ng-model="item.label"/>
+                                           	</div>
+                                			<div class="col-md-2" ng-if="operation =='view'">{{item.label}}</div>
+                                			<div class="col-md-2">Filed Type:</div>
+                                			<div class="col-md-2">
+                                    			<select ng-model="item.type" class="form-control w-md">
+                                        			<option ng-repeat="data in typeList" ng-disabled="operation =='view'"
+                                                		value="{{data.value}}">{{data.label}}
+                                        			</option>
+                                    			</select>
+                                			</div>
+                            			</div>
+                            			<div class="marginTop">
+                                			<button class='btn btn-info' ng-if="operation !='view'" ng-click="add()">Add Field
+                                				</button>
+                                			<button class='btn btn-info' ng-if="operation !='view' && conf.fields.length >1 "
+                                        		ng-click="remove()">Delete Field
+                                			</button>
+                            			</div>
+                            			<div class="row marginTop">
+                                			<div class="col-md-2">Roles:</div>
+                                				<div style="overflow: hidden;">
+                                    				<div class="radioboxM" style="width:140px;" ng-repeat="role in roles">
+                                        				<input ng-disabled="operation =='view'" id="{{role.name}}" name="proType1"
+                                               				type="checkbox" value="{{role.name}}" ng-checked="role.checked"
+                                               				ng-model="role.checked" ng-click="toggleSelection(role.name)">
+                                        				<label for="{{role.name}}" title="{{role.name}}">{{role.name}}</label>
+                                    				</div>
+                                				</div>
+
+                            			</div>
+                        			</div>
+        							<div class="m-t m-b" align="center">
+          								<button type="submit" class="btn btn-default btn-rounded" ng-click="steps.step2=true">Next</button>
+        							</div>
+      							</form>
+    						</tab>
+    						<tab heading="Process Configuration" disabled="step1.$invalid" active="steps.step2" select="steps.percent=30">
+      							<form name="step2" class="form-validation">
+        							<div class="row marginTop" ng-repeat="item in conf.steps">
+                            			<div class="col-md-2">Step:</div>
+                            			<div class="col-md-2">{{item.step+1}}</div>
+                            			<div class="col-md-2">Processor:</div>
+                            			<div class="col-md-2" ng-if="operation !=='view'">
+                                			<select ng-model="item.processor" class="form-control w-md" required>
+                                				<option value="">-please select-</option>
+                                       	 		<option ng-repeat="data in processors" ng-disabled="operation =='view'"
+                                                		value="{{data.value}}" ng-selected="item.processor==data.value">{{data.label}}
+                                        		</option>
+                                    		</select>
+                                		</div>
+                                		<div class="col-md-2" ng-if="operation =='view'">{{item.processor}}</div>
+                            		</div>
+                            		<div class="marginTop">
+                                		<button class='btn btn-info' ng-if="operation !='view'" ng-click="addStep()">Add Step
+                                		</button>
+                                		<button class='btn btn-info' ng-if="operation !='view' && conf.steps.length >1 "
+                                        		ng-click="removeStep()">Delete Step
+                                		</button>
+                            		</div>
+        							<div class="m-t m-b" align="center">
+          								<button type="button" class="btn btn-default btn-rounded" ng-click="steps.step1=true">Prev</button>
+        							</div>
+      							</form>
+    						</tab>
+  						</tabset>
+  						<div ng-show="remindMessage" class="col-md-12 errorMessage">
+                            {{remindMessage}}
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class='btn btn-info'
+                            data-dismiss="modal" ng-click="close()">Close
+                    </button>
+                    <button type="button" class='btn btn-info' ng-show="operation =='save'"
+                            title="Fill in all the fields"
+                            ng-disabled="!configurationForm.$valid || !containRole" ng-click="submit()">
+                        Save
+                    </button>
+                    <button type="button" class='btn btn-info' ng-show="operation ==='edit'"
+                            ng-disabled="!configurationForm.$valid || !containRole" ng-click="edit()">
+                        Update
+                    </button>
+                    <button type="button" class='btn btn-info' ng-click="delete()"
+                            ng-show="operation ==='delete'">
+                        Confirm
+                    </button>
+                </div>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+
+
+

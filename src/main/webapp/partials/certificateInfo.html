@@ -1,0 +1,34 @@
+<div ng-controller="certificateController">
+<!-- <div> -->
+<!-- <input type="button" ng-click="getcertificateInfo()" class="btn" value="get"> -->
+<!-- </div> -->
+<div>
+<table class= "table">
+<tr ng-repeat="info in information">
+<td><input type="checkbox" id={{info.id}} name="{{info.name}}" ng-model="info.selected"></td>
+<td>Certificate Type: {{info.type}}</td>
+<td></td>
+<td>Name: {{info.name}}</td>
+<td></td>
+<td>Guid: {{info.guid}}</td>
+<td></td>
+<td>Status: {{info.status}}</td>
+</tr>
+</table>
+<div>
+<input type="button" ng-click="submitCheck('approve')" class="btn" value="approve" ng-model="approve">
+<input type="button" ng-click="submitCheck('reject')" class="btn" value="reject" ng-model="reject">
+</div>
+</div>
+<style type="text/css"> 
+body{font-size:24px; line-height:24px;} 
+.btn {
+    font: 14px/21px Arial;
+    border: 1px solid #DDD;
+    padding: 5px 10px;
+    background: #FFF;
+    color: blue;
+    text-decoration: none;
+}
+</style> 
+</div>

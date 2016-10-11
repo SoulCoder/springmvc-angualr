@@ -1,0 +1,66 @@
+<div ng-controller="certificateController">
+<div>
+    <label>Please choose the type of Certificate:
+        <select ng-model="chosen" ng-options="chosen.name for chosen in chosens" ng-change="showcertificate()">
+        </select>
+    </label>
+    <br>
+    <br>
+    <br>
+</div>
+<div ng-show="chosen.id == 1" ng-model="incumbency.type">
+  <span>Name:</span>
+  <input type="text" ng-model="incumbency.name">&nbsp
+  <span>Guid:</span>
+  <input type="text" ng-model="incumbency.guid">
+  <br>
+  <span>Section:</span>
+  <input type="text" ng-model="incumbency.section">&nbsp
+  <span>Date:</span>
+  <input type="text" ng-model="incumbency.date">
+  <br>
+  <input type="button" ng-click="saveCertificate(incumbency)" class="btn" value="Save">
+  <input type="button" ng-click="submitCertificate(incumbency)" class="btn" value="Submit">
+</div>
+
+<div ng-show="chosen.id == 2" ng-model="income.type">
+  <span>Name:</span>
+  <input type="text" ng-model="income.name">&nbsp
+  <span>Guid:</span>
+  <input type="text" ng-model="income.guid">
+  <br>
+  <span>Level:</span>
+  <input type="text" ng-model="income.level">&nbsp
+  <span>Time:</span>
+  <input type="text" ng-model="income.time">
+  <br>
+  <input type="button" ng-click="saveCertificate(income)" class="btn" value="Save">
+  <input type="button" ng-click="submitCertificate(income)" class="btn" value="submit">
+</div>
+
+<div ng-show="chosen.id == 3" ng-model="travel.type">
+  <span>Name:</span>
+  <input type="text" ng-model="travel.name">&nbsp
+  <span>Guid:</span>
+  <input type="text" ng-model="travel.guid">
+  <br>
+  <span>Destination:</span>
+  <input type="text" ng-model="travel.destination">&nbsp
+  <span>Department:</span>
+  <input type="text" ng-model="travel.department">
+  <br>
+  <input type="button" ng-click="saveCertificate(travel)" class="btn" value="Save">
+  <input type="button" ng-click="submitCertificate(travel)" class="btn" value="submit">
+</div>
+</div>
+<style type="text/css"> 
+body{font-size:24px; line-height:24px;} 
+.btn {
+    font: 14px/21px Arial;
+    border: 1px solid #DDD;
+    padding: 5px 10px;
+    background: #FFF;
+    color: blue;
+    text-decoration: none;
+}
+</style> 

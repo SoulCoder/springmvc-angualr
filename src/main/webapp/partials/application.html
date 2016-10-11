@@ -1,0 +1,25 @@
+<div>
+	<div class="bg-light lter b-b wrapper-md">
+		<h1 class="m-n font-thin h3">{{returnData.table.label}}</h1>
+	</div>
+	<div ng-init="init()" class="wrapper-md">
+		<div class="panel panel-default">
+			<div class="panel-body b-b b-light row">
+				<div class="xf_ht_search_xl  col-md-3 paddingtop10" style="width: 80px;">
+					<button type="button" class="btn btn-info" ng-click="showAddDialog()">Add</button>
+				</div>
+			</div>
+			<div>
+				<table class="table m-b-none" ui-jq="footable" data-filter="#filter">
+					<thead>
+						<tr>
+							<th ng-repeat="info in returnData.fields">{{info.label}}</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
